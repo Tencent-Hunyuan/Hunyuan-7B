@@ -744,5 +744,9 @@ print(response)
 hunyuan-A13B 现已开放网页demo。访问 https://hunyuan.tencent.com/?model=hunyuan-a13b 即可简单体验我们的模型。
 
 
+## 社区资源
+
+- [Hunyuan-7B 在 CNB 中快速开始](https://cnb.cool/tencent/hunyuan/examples/Hunyuan-7B-Instruct-quick-start)
+
 ## 联系我们
 如果你想给我们的研发和产品团队留言，欢迎联系我们腾讯混元LLM团队。你可以通过邮件（hunyuan_opensource@tencent.com）联系我们。

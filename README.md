@@ -497,6 +497,9 @@ docker run --entrypoint="python3" --gpus all \
     -m sglang.launch_server --model-path hunyuan/huanyuan_7B --tp 4 --trust-remote-code --host 0.0.0.0 --port 30000
 ```
 
+## Community Resources
+
+- [Hunyuan-7B Quick Start on CNB](https://cnb.cool/tencent/hunyuan/examples/Hunyuan-7B-Instruct-quick-start)
 
 ## Contact Us
 
