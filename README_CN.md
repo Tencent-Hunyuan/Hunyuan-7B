@@ -102,12 +102,12 @@ messages = [
 ]
 tokenized_chat = tokenizer.apply_chat_template(
     messages, 
-    tokenize=False
+    tokenize=False,
     add_generation_prompt=True,
     enable_thinking=True
 )
                                                 
-model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
+model_inputs = tokenizer([tokenized_chat], return_tensors="pt").to(model.device)
 model_inputs.pop("token_type_ids", None)
 outputs = model.generate(**model_inputs, max_new_tokens=4096)
 output_text = tokenizer.decode(outputs[0])
