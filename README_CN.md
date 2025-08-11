@@ -21,8 +21,8 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/Tencent-Hunyuan/Hunyuan-7B"><b>GITHUB</b></a> | 
-    <a href="https://cnb.cool/tencent/hunyuan/Hunyuan-7B"><b>cnb.cool</b></a> | 
+    <a href="https://github.com/Tencent-Hunyuan/Hunyuan-7B"><b>GITHUB</b></a> |
+    <a href="https://cnb.cool/tencent/hunyuan/Hunyuan-7B"><b>cnb.cool</b></a> |
     <a href="https://github.com/Tencent-Hunyuan/Hunyuan-7B/blob/main/LICENSE"><b>LICENSE</b></a>
 </p>
 
@@ -37,7 +37,7 @@
 
 
 ### 核心特性与优势
-- ​**混合推理支持**​：同时支持快思考和慢思考两种模式，支持用户灵活选择 
+- ​**混合推理支持**​：同时支持快思考和慢思考两种模式，支持用户灵活选择
 - ​**超长上下文理解**​：原生支持256K上下文窗口，在长文本任务中保持稳定性能
 - ​**增强Agent能力**​：优化Agent能力，在BFCL-v3、τ-Bench、C3-Bench等智能体基准测试中领先
 - ​**高效推理**​：采用分组查询注意力（GQA）策略，支持多量化格式，实现高效推理
@@ -79,7 +79,10 @@
 &nbsp;
 
 ## 使用 transformers 推理
-
+首先，需要安装指定版本的transformers，我们将在不久后完成对transformers主分支的合入
+```SHELL
+pip install git+https://github.com/huggingface/transformers@4970b23cedaf745f963779b4eae68da281e8c6ca
+```
 我们的模型默认使用慢思考进行推理，有两种方法可以禁用 CoT 推理。
 
 1. 调用 apply_chat_template 时传递 **enable_thinking=False**。
@@ -101,12 +104,12 @@ messages = [
     {"role": "user", "content": "Write a short summary of the benefits of regular exercise"},
 ]
 tokenized_chat = tokenizer.apply_chat_template(
-    messages, 
+    messages,
     tokenize=False
     add_generation_prompt=True,
     enable_thinking=True
 )
-                                                
+
 model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
 model_inputs.pop("token_type_ids", None)
 outputs = model.generate(**model_inputs, max_new_tokens=4096)
@@ -140,7 +143,7 @@ print(f"answer_content:{answer_content}\n\n")
 
 &nbsp;
 
-## 训练数据格式处理 
+## 训练数据格式处理
 
 如果需要微调我们的 Instruct 模型，建议将数据处理成以下格式，分别对应慢思考和快思考的场景。
 
@@ -232,7 +235,7 @@ pip install git+https://github.com/huggingface/transformers@4970b23cedaf745f9637
 
 ### 训练
 
-1. 将`train/llama_factory_support/example_configs`目录下的文件都拷贝到`LLaMA-Factory`的`example/hunyuan`目录下。
+1. 将`llama_factory_support/example_configs`目录下的文件都拷贝到`LLaMA-Factory`的`example/hunyuan`目录下。
 2. 修改配置文件`hunyuan_full.yaml`中的模型路径和数据集名称，其他的配置请根据需要进行修改。
   ```
   ### model
@@ -263,7 +266,7 @@ pip install git+https://github.com/huggingface/transformers@4970b23cedaf745f9637
 我们使用了 [AngleSlim](https://github.com/tencent/AngelSlim) 压缩工具来生成 FP8 和 INT4 量化模型。`AngleSlim` 是一款专门致力于打造更易用、更全面且更高效的模型压缩解决方案的工具。
 
 ### FP8 量化
-我们采用FP8-static量化，FP8量化采用8位浮点格式，通过少量校准数据（无需训练）预先确定量化scale，将模型权重与激活值转换为FP8格式，提升推理效率并降低部署门槛。 我们您可以使用AngleSlim量化，你也可以直接下载我们量化完成的开源模型使用[LINK](https://huggingface.co/).
+我们采用FP8-static量化，FP8量化采用8位浮点格式，通过少量校准数据（无需训练）预先确定量化scale，将模型权重与激活值转换为FP8格式，提升推理效率并降低部署门槛。 我们您可以使用AngleSlim量化，你也可以直接下载我们量化完成的开源模型使用 [AngelSlim](https://huggingface.co/AngelSlim).
 
 ### Int4 Quantization
 Int4量化我们采用GPTQ和AWQ算法实现W4A16量化。
@@ -271,7 +274,7 @@ Int4量化我们采用GPTQ和AWQ算法实现W4A16量化。
 GPTQ算法采用逐层处理模型权重，利用少量校准数据最小化量化后的权重重构误差，通过近似Hessian逆矩阵的优化过程逐层调整权重。流程无需重新训练模型，仅需少量校准数据即可量化权重，提升推理效率并降低部署门槛。
 AWQ使用少量校准数据（无需进行训练）来计算激活值的幅度，从而进行统计计算。对于每个权重通道，都会计算一个缩放系数s，以扩大重要权重的数值表达范围，从而在量化过程中能够保留更多的信息。
 
-您可以使用 [AngleSlim](https://github.com/tencent/AngelSlim) 量化，也可以直接下载我们量化完成的开源模型使用 [LINK](https://huggingface.co/) 。
+您可以使用 [AngleSlim](https://github.com/tencent/AngelSlim) 量化，也可以直接下载我们量化完成的开源模型使用 [AngelSlim](https://huggingface.co/AngelSlim) 。
 
 
 #### 量化 Benchmark
@@ -288,27 +291,27 @@ AWQ使用少量校准数据（无需进行训练）来计算激活值的幅度�
 
 &nbsp;
 
-## 推理和部署 
+## 推理和部署
 
 HunyuanLLM可以采用TensorRT-LLM, vLLM或sglang部署。为了简化部署过程HunyuanLLM提供了预构建docker镜像，详见一下章节。
 
-镜像：https://hub.docker.com/r/hunyuaninfer/hunyuan-a13b/tags
+镜像：https://hub.docker.com/r/hunyuaninfer/hunyuan-7b/tags
 
 ## 使用TensorRT-LLM推理
 ### Docker:
 
 为了简化部署过程，HunyuanLLM提供了预构建docker镜像 (注意： 该镜像要求Host的Cuda版本为12.8以上）：
 
-[hunyuaninfer/hunyuan-a13b:hunyuan-moe-A13B-trtllm](https://hub.docker.com/r/hunyuaninfer/hunyuan-a13b/tags) 。您只需要下载模型文件并用下面代码启动docker即可开始推理模型。
+[hunyuaninfer/hunyuan-7b:hunyuan-7b-trtllm](https://hub.docker.com/r/hunyuaninfer/hunyuan-7b/tags) 。您只需要下载模型文件并用下面代码启动docker即可开始推理模型。
 ```shell
 # 拉取
 国内：
-docker pull docker.cnb.cool/tencent/hunyuan/hunyuan-a13b:hunyuan-moe-A13B-trtllm
+docker pull docker.cnb.cool/tencent/hunyuan/hunyuan-7b:hunyuan-7b-trtllm
 国外：
-docker pull hunyuaninfer/hunyuan-a13b:hunyuan-moe-A13B-trtllm
+docker pull hunyuaninfer/hunyuan-7b:hunyuan-7b-trtllm
 
 # 启动
-docker run --privileged --user root --name hunyuanLLM_infer --rm -it --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 --gpus=all hunyuaninfer/hunyuan-a13b:hunyuan-moe-A13B-trtllm     
+docker run --privileged --user root --name hunyuanLLM_infer --rm -it --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 --gpus=all hunyuaninfer/hunyuan-7b:hunyuan-7b-trtllm
 ```
 
 注: Docker容器权限管理。以上代码采用特权模式（--privileged）启动Docker容器会赋予容器较高的权限，增加数据泄露和集群安全风险。建议在非必要情况下避免使用特权模式，以降低安全威胁。对于必须使用特权模式的场景，应进行严格的安全评估，并实施相应的安全监控、加固措施。
@@ -330,7 +333,7 @@ def setup_llm(args):
         free_gpu_memory_fraction=args.kv_cache_fraction,
     )
     spec_config = None
-    
+
     hf_ckpt_path="$your_hunyuan_model_path"
     tokenizer = AutoTokenizer.from_pretrained(hf_ckpt_path, trust_remote_code=True)
     llm = LLM(
@@ -405,13 +408,14 @@ def main():
 运行方式：
 
 ```shell
-python3 quickstart_advanced.py --model_dir "HunyuanLLM模型路径" --tp_size 4
+python3 quickstart_advanced.py --model_dir "HunyuanLLM模型路径" --tp_size 1
 ```
 
 #### 方式2：服务化推理
 
 下面我们展示使用`TensorRT-LLM`服务化的方式部署模型和请求。
 
+以tencent/Hunyuan-7B-Instruct为例
 准备配置文件：
 
 ```
@@ -433,13 +437,13 @@ EOF
 
 ```shell
 trtllm-serve \
-  /path/to/HunYuan-moe-A13B \
+  /path/to/HunYuan-7b \
   --host localhost \
   --port 8000 \
   --backend pytorch \
   --max_batch_size 32 \
   --max_num_tokens 16384 \
-  --tp_size 2 \
+  --tp_size 1 \
   --kv_cache_free_gpu_memory_fraction 0.6 \
   --trust_remote_code \
   --extra_llm_api_options /path/to/extra-llm-api-config.yml
@@ -450,7 +454,7 @@ trtllm-serve \
 curl -X POST "http://localhost:8000/v1/chat/completions" \
   -H "Content-Type: application/json" \
   --data '{
-    "model": "HunYuan/HunYuan-80B-A13B",
+    "model": "HunYuan/HunYuan-7b",
     "messages": [
       {
         "role": "user",
@@ -465,47 +469,17 @@ curl -X POST "http://localhost:8000/v1/chat/completions" \
 
 
 ## 使用vLLM推理
-### Docker:
+### 版本要求:
 
-为了简化部署过程，HunyuanLLM提供了预构建docker镜像 (注意： 该镜像要求Host的Cuda版本为12.8以上）：
+请使用vLLM v0.10.0之后的版本进行部署和推理
 
-[hunyuaninfer/hunyuan-a13b:hunyuan-moe-A13B-vllm](https://hub.docker.com/r/hunyuaninfer/hunyuan-a13b/tags) 。您只需要下载模型文件并用下面代码启动docker即可开始推理模型。
-```shell
-# 下载模型：
-# ModelScope: 
-modelscope download --model Tencent-Hunyuan/Hunyuan-A13B-Instruct
-# Huggingface: vllm 会自动下载
-
-# 拉取
-国内：
-docker pull docker.cnb.cool/tencent/hunyuan/hunyuan-a13b:hunyuan-moe-A13B-vllm 
-国外：
-docker pull hunyuaninfer/hunyuan-a13b:hunyuan-moe-A13B-vllm
-
-# 使用 huggingface 起服务
-docker run  --privileged --user root  --net=host --ipc=host \
-        -v ~/.cache:/root/.cache/ \
-        --gpus=all -it --entrypoint python docker.cnb.cool/tencent/hunyuan/hunyuan-a13b:hunyuan-moe-A13B-vllm \
-         -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 8000 \
-         --tensor-parallel-size 4 --model tencent/Hunyuan-A13B-Instruct --trust-remote-code 
-
-# 使用modelscope下载的模型起服务
-docker run  --privileged --user root  --net=host --ipc=host \
-        -v ~/.cache/modelscope:/root/.cache/modelscope \
-        --gpus=all -it --entrypoint python   docker.cnb.cool/tencent/hunyuan/hunyuan-a13b:hunyuan-moe-A13B-vllm \
-         -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --tensor-parallel-size 4 \
-         --port 8000 --model /root/.cache/modelscope/hub/models/Tencent-Hunyuan/Hunyuan-A13B-Instruct/ --trust_remote_code           
+需要安装指定版本的transformers，我们将在不久后完成对transformers主分支的合入
+```SHELL
+pip install git+https://github.com/huggingface/transformers@4970b23cedaf745f963779b4eae68da281e8c6ca
 ```
-
-注: Docker容器权限管理。以上代码采用特权模式（--privileged）启动Docker容器会赋予容器较高的权限，增加数据泄露和集群安全风险。建议在非必要情况下避免使用特权模式，以降低安全威胁。对于必须使用特权模式的场景，应进行严格的安全评估，并实施相应的安全监控、加固措施。
-
-
 ### BF16部署
 
-BF16可以在2张显存超过80G的GPU卡上部署，如果长文推荐TP4。按如下步骤执行：
-
-运行命令前请先设置如下环境变量：
-
+以tencent/Hunyuan-7B-Instruct为例，已经通过上述的transformers获取了模型地址
 ```shell
 export MODEL_PATH=PATH_TO_MODEL
 ```
@@ -566,79 +540,103 @@ for output in outputs:
 
 下面我们展示使用`vLLM`服务化的方式部署模型并请求
 
-在主节点上运行：
-
+我们启动服务，运行 :
 ```shell
-export VLLM_HOST_IP=${LOCAL_IP}
-```
-接着我们启动服务，运行 :
-```shell
-cd inference
-sh run_server.sh
-```
-
-运行`run_server.sh`成功后, 运行请求脚本：
-```shell
-sh openapi.sh
+python3 -m vllm.entrypoints.openai.api_server \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --trust-remote-code \
+    --model ${MODEL_PATH} \
+    --tensor-parallel-size 1 \
+    --dtype bfloat16 \
+    --quantization experts_int8 \
+    --served-model-name hunyuan \
+    2>&1 | tee log_server.txt
 ```
 
-注意修改`openapi.sh`中的`${LOCAL_IP}`和`${MODEL_PATH}`为服务对应值。
-
+运行成功后, 运行请求脚本：
+```shell
+curl http://0.0.0.0:8000/v1/chat/completions -H 'Content-Type: application/json' -d '{
+"model": "hunyuan",
+"messages": [
+    {
+        "role": "system",
+        "content": [{"type": "text", "text": "You are a helpful assistant."}]
+    },
+    {
+        "role": "user",
+        "content": [{"type": "text", "text": "请按面积大小对四大洋进行排序，并给出面积最小的洋是哪一个？直接输出结果。"}]
+    }
+],
+"max_tokens": 2048,
+"temperature":0.7,
+"top_p": 0.6,
+"top_k": 20,
+"repetition_penalty": 1.05,
+"stop_token_ids": [127960]
+}'
+```
 
 ### 量化模型部署：
 
 本部分介绍采用vLLM部署量化后模型的流程。
 
-镜像：部署镜像同BF16。
-
 
 #### Int8量化模型部署：
-部署Int8-weight-only版本HunYuan-A13B模型只需设置`run_server_int8.sh`中的环境变量：
-```SHELL
-export MODEL_PATH=PATH_TO_BF16_MODEL
-```
+部署Int8-weight-only版本HunYuan-7B模型
 
-接着我们启动Int8服务。运行：
+我们启动Int8服务，运行：
 ```shell
-sh run_server_int8.sh
-```
-
-运行`run_server_int8.sh`成功后, 运行请求脚本：
-```shell
-sh openapi.sh
+python3 -m vllm.entrypoints.openai.api_server \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --trust-remote-code \
+    --model ${MODEL_PATH} \
+    --tensor-parallel-size 1 \
+    --dtype bfloat16 \
+    --served-model-name hunyuan \
+    --quantization experts_int8 \
+    2>&1 | tee log_server.txt
 ```
 
 #### Int4量化模型部署：
-部署Int4-weight-only版本HunYuan-A13B模型只需设置`run_server_int4.sh`中的环境变量，采用GPTQ方式：
-```SHELL
+部署Int4-weight-only版本HunYuan-7B模型，采用GPTQ方式：
+
+```shell
 export MODEL_PATH=PATH_TO_INT4_MODEL
 ```
-
-接着我们启动Int4服务。运行：
+接着我们启动Int4服务，运行：
 ```shell
-sh run_server_int4.sh
+python3 -m vllm.entrypoints.openai.api_server \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --trust-remote-code \
+    --model ${MODEL_PATH} \
+    --tensor-parallel-size 1 \
+    --dtype bfloat16 \
+    --served-model-name hunyuan \
+    --quantization gptq_marlin \
+    2>&1 | tee log_server.txt
 ```
 
-运行`run_server_int4.sh`成功后, 运行请求脚本：
-```shell
-sh openapi.sh
-```
 
 #### FP8量化模型部署：
-部署W8A8C8版本HunYuan-A13B模型只需设置`run_server_int8.sh`中的环境变量：
+部署W8A8C8版本HunYuan-7B模型
+
+我们启动FP8服务，运行：
 ```shell
-export MODEL_PATH=PATH_TO_FP8_MODEL
+python3 -m vllm.entrypoints.openai.api_server \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --trust-remote-code \
+    --model ${MODEL_PATH} \
+    --tensor-parallel-size 1 \
+    --dtype bfloat16 \
+    --served-model-name hunyuan \
+    --kv-cache-dtype fp8 \
+    2>&1 | tee log_server.txt
 ```
 
-接着我们启动FP8服务。运行：
-```shell
-sh run_server_fp8.sh
-```
-
-运行`run_server_fp8.sh`成功后, 运行请求脚本：
-```shell
-sh openapi.sh
-```
 ## 使用sglang推理
 
 ### BF16部署
@@ -647,20 +645,20 @@ sh openapi.sh
 
 
 ```
-docker pull docker.cnb.cool/tencent/hunyuan/hunyuan-a13b:hunyuan-moe-A13B-sglang
-或
-docker pull hunyuaninfer/hunyuan-a13b:hunyuan-moe-A13B-sglang
+docker pull lmsysorg/sglang:latest
 ```
 
 - 启动 API server:
 
 ```
-docker run --gpus all \
+docker run --entrypoint="python3" --gpus all \
     --shm-size 32g \
     -p 30000:30000 \
+    --ulimit nproc=10000 \
+    --privileged \
     --ipc=host \
-    docker.cnb.cool/tencent/hunyuan/hunyuan-a13b:hunyuan-moe-A13B-sglang \
-    -m sglang.launch_server --model-path hunyuan/huanyuan_A13B --tp 4 --trust-remote-code --host 0.0.0.0 --port 30000
+     lmsysorg/sglang:latest \
+    -m sglang.launch_server --model-path hunyuan/huanyuan_7B --tp 1 --trust-remote-code --host 0.0.0.0 --port 30000
 ```
 
 #### Step2：执行推理
@@ -696,7 +694,7 @@ print(prompts)
 
 llm = sgl.Engine(
     model_path=model_path,
-    tp_size=4,
+    tp_size=1,
     trust_remote_code=True,
     mem_fraction_static=0.7,
 )
@@ -740,9 +738,8 @@ print(response)
 #### FP8/Int4量化模型部署：
 目前 sglang 的 fp8 和 int4 量化模型正在支持中，敬请期待。
 
-## 交互式Demo Web 
-hunyuan-A13B 现已开放网页demo。访问 https://hunyuan.tencent.com/?model=hunyuan-a13b 即可简单体验我们的模型。
-
+## 交互式Demo Web
+hunyuan-7B 现已开放网页demo。访问 https://hunyuan.tencent.com/?model=hunyuan-7b 即可简单体验我们的模型。
 
 ## 社区资源
 

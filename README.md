@@ -22,8 +22,8 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/Tencent-Hunyuan/Hunyuan-7B"><b>GITHUB</b></a> | 
-    <a href="https://cnb.cool/tencent/hunyuan/Hunyuan-7B"><b>cnb.cool</b></a> | 
+    <a href="https://github.com/Tencent-Hunyuan/Hunyuan-7B"><b>GITHUB</b></a> |
+    <a href="https://cnb.cool/tencent/hunyuan/Hunyuan-7B"><b>cnb.cool</b></a> |
     <a href="https://github.com/Tencent-Hunyuan/Hunyuan-7B/blob/main/LICENSE"><b>LICENSE</b></a>
 </p>
 
@@ -48,7 +48,7 @@ We have released a series of Hunyuan dense models, comprising both pre-trained a
 
 ## Benchmark
 
-Note: The following benchmarks are evaluated by TRT-LLM-backend on several **base models**. 
+Note: The following benchmarks are evaluated by TRT-LLM-backend on several **base models**.
 
 | Model            | Hunyuan-0.5B-Pretrain | Hunyuan-1.8B-Pretrain | Hunyuan-4B-Pretrain | Hunyuan-7B-Pretrain|
 |:------------------:|:---------------:|:--------------:|:-------------:|:---------------:|
@@ -86,7 +86,7 @@ First, please install transformers. We will merge it into the main branch later.
 ```SHELL
 pip install git+https://github.com/huggingface/transformers@4970b23cedaf745f963779b4eae68da281e8c6ca
 ```
-Our model defaults to using slow-thinking reasoning, and there are two ways to disable CoT reasoning. 
+Our model defaults to using slow-thinking reasoning, and there are two ways to disable CoT reasoning.
 1. Pass **"enable_thinking=False"** when calling apply_chat_template.
 2. Adding **"/no_think"** before the prompt will force the model not to use perform CoT reasoning. Similarly, adding **"/think"** before the prompt will force the model to perform CoT reasoning.
 
@@ -109,7 +109,7 @@ messages = [
 tokenized_chat = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True,return_tensors="pt",
                                                 enable_thinking=True # Toggle thinking mode (default: True)
                                                 )
-                                                
+
 outputs = model.generate(tokenized_chat.to(model.device), max_new_tokens=2048)
 
 output_text = tokenizer.decode(outputs[0])
@@ -156,15 +156,15 @@ think_pattern = f"<think>\n{think}\n</think>\n<answer>\n{answer}\n</answer>"
 # fast think pattern
 messages = [
     {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "/no_think海水为什么是咸的" },
-    {"role": "assistant", "content": "<think>\n\n</think>\n<answer>\n海水是咸的主要是因为其中含有许多溶解在水中的盐类和矿物质。这些盐类和矿物质来自于地球表面的岩石和土壤中的化学物质，随着时间的推移，它们被带到了海洋中。当海水蒸发时，水分蒸发掉了，但盐类和矿物质仍然留在水中，导致海水变得更加咸味。因此，海水的咸度是由其中的盐类和矿物质的含量决定的。\n</answer>"}
+    {"role": "user", "content": "/no_think Why is seawater salty?" },
+    {"role": "assistant", "content": "<think>\n\n</think>\n<answer>\nSeawater is primarily saline due to dissolved salts and minerals. These substances come from the chemical materials in rocks and soil on the Earth's surface, which are carried into the ocean over time. When seawater evaporates, the water vapor leaves, but the salts and minerals remain, making the seawater saltier. Therefore, the salinity of seawater is determined by the amount of salts and minerals it contains.\n</answer>"}
 ]
 
 # slow think pattern
 messages = [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "1+1=" },
-    {"role": "assistant", "content": "<think>\n嗯，用户问的是1加1等于多少。首先，我需要确认这是一个基本的算术问题。1加1在十进制的数学体系中，通常的结果是2。不过，可能需要考虑是否有其他情况，比如二进制或者其他数制，但用户没有特别说明，所以默认应该是十进制。另外，有时候可能会有脑筋急转弯的情况，比如在某些语境下1+1可能等于1（比如1滴水加1滴水还是1滴水），但通常数学问题中都是2。所以最准确的回答应该是2。</think>\n<answer>\n在十进制的基本算术运算中，1加1的结果是2。这是数学中最基础的加法运算之一，遵循自然数的加法规则。因此，1 + 1 = 2。\n</answer>"}
+    {"role": "assistant", "content": "<think>\nThe user is asking for the result of 1 + 1. First, I must confirm this is a basic arithmetic question. In the decimal numeral system, 1 + 1 typically equals 2. While alternative interpretations might exist in different numeral systems (e.g., binary) or contextual riddles, no special context is specified here, so the default assumption is the decimal system. Additionally, there are occasional riddle-like scenarios where 1 + 1 could equal 1 (e.g., one drop of water plus another drop still forms one drop), but in standard mathematical contexts, the answer is 2. Therefore, the most accurate response is 2.</think>\n<answer>\nIn basic decimal arithmetic, 1 plus 1 equals 2. This operation adheres to the basic rules of natural number addition, so: 1 + 1 = 2.\n</answer>"}
 ]
 
 from transformers import AutoTokenizer
@@ -180,7 +180,7 @@ In the following chapter, we will introduce how to use `LLaMA-Factory` to fine-t
 
 #### Prerequisites
 
-Verify installation of the following dependencies:  
+Verify installation of the following dependencies:
 - **LLaMA-Factory**: Follow [official installation guide](https://github.com/hiyouga/LLaMA-Factory)
 - **DeepSpeed** (optional): Follow [official installation guide](https://github.com/deepspeedai/DeepSpeed#installation)
 - **Transformer Library**: Use the companion branch (Hunyuan-submitted code is pending review)
@@ -234,7 +234,7 @@ Refer to the [Data Format](#training-data-format) section mentioned earlier for 
 
 #### Training execution
 
-1. Copy all files from the `train/llama_factory_support/example_configs` directory to the `example/hunyuan` directory in `LLaMA-Factory`.
+1. Copy all files from the `llama_factory_support/example_configs` directory to the `example/hunyuan` directory in `LLaMA-Factory`.
 2. Modify the model path and dataset name in the configuration file `hunyuan_full.yaml`. Adjust other configurations as needed:
 ```
 ### model
@@ -265,15 +265,15 @@ dataset: [!!!add the dataset name here!!!]
 We used our own [AngleSlim](https://github.com/tencent/AngelSlim) compression tool to produce FP8 and INT4 quantization models. `AngleSlim` is a toolset dedicated to creating a more user-friendly, comprehensive and efficient model compression solution.
 
 ### FP8 Quantization
-We use FP8-static quantization, FP8 quantization adopts 8-bit floating point format, through a small amount of calibration data (without training) to pre-determine the quantization scale, the model weights and activation values will be converted to FP8 format, to improve the inference efficiency and reduce the deployment threshold. We you can use AngleSlim quantization, you can also directly download our quantization completed open source model to use [LINK](https://huggingface.co/).
+We use FP8-static quantization, FP8 quantization adopts 8-bit floating point format, through a small amount of calibration data (without training) to pre-determine the quantization scale, the model weights and activation values will be converted to FP8 format, to improve the inference efficiency and reduce the deployment threshold. We you can use AngleSlim quantization, you can also directly download our quantization completed open source model to use [AngelSlim](https://huggingface.co/AngelSlim).
 
 ### Int4 Quantization
 We use the GPTQ and AWQ algorithm to achieve W4A16 quantization.
 
-GPTQ processes the model weights layer by layer, uses a small amount of calibration data to minimize the reconfiguration error of the quantized weights, and adjusts the weights layer by layer by the optimization process of approximating the Hessian inverse matrix. The process eliminates the need to retrain the model and requires only a small amount of calibration data to quantize the weights, improving inference efficiency and lowering the deployment threshold. 
+GPTQ processes the model weights layer by layer, uses a small amount of calibration data to minimize the reconfiguration error of the quantized weights, and adjusts the weights layer by layer by the optimization process of approximating the Hessian inverse matrix. The process eliminates the need to retrain the model and requires only a small amount of calibration data to quantize the weights, improving inference efficiency and lowering the deployment threshold.
 AWQ using a small amount of calibration data (without the need for training), the amplitude of the activation values is statistically calculated. For each weight channel, a scaling coefficient s is computed to expand the numerical range of important weights, allowing more information to be retained during quantization.
 
-You can use  [AngleSlim](https://github.com/tencent/AngelSlim) quantization, you can also directly download our quantization completed open source model to use [LINK](https://huggingface.co/).
+You can use  [AngleSlim](https://github.com/tencent/AngelSlim) quantization, you can also directly download our quantization completed open source model to use [AngelSlim](https://huggingface.co/AngelSlim).
 
 
 
@@ -288,29 +288,27 @@ This subsection describes the Benchmark metrics for the Hunyuan quantitative mod
 |   AIME 2024   | B16<br>FP8<br>Int4GPTQ<br>Int4AWQ |    17.2<br>17.2<br>-<br>-    |    56.7<br>55.17<br>-<br>-     |    78.3<br>76.6<br>-<br>-    | 81.1<br>80.9<br>81.0<br>80.9 |
 
 
-## Deployment   
+## Deployment
 
 For deployment, you can use frameworks such as **TensorRT-LLM**, **vLLM**, or **SGLang** to serve the model and create an OpenAI-compatible API endpoint.
 
-image: https://hub.docker.com/r/hunyuaninfer/hunyuan-7B/tags 
+image: https://hub.docker.com/r/hunyuaninfer/hunyuan-7B/tags
 
 
 ### TensorRT-LLM
 
-#### Docker Image 
+#### Docker Image
 
 We provide a pre-built Docker image based on the latest version of TensorRT-LLM.
 
 We use tencent/Hunyuan-7B-Instruct for example
 - To get started:
 
-https://hub.docker.com/r/hunyuaninfer/hunyuan-large/tags 
-
 ```
-docker pull hunyuaninfer/hunyuan-7B:hunyuan-moe-7B-trtllm
+docker pull docker.cnb.cool/tencent/hunyuan/hunyuan-7b:hunyuan-7b-trtllm
 ```
 ```
-docker run --privileged --user root --name hunyuanLLM_infer --rm -it --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 --gpus=all hunyuaninfer/hunyuan-7B:hunyuan-moe-7B-trtllm
+docker run --privileged --user root --name hunyuanLLM_infer --rm -it --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 --gpus=all hunyuaninfer/hunyuan-7B:hunyuan-7b-trtllm
 ```
 
 - Prepare Configuration file:
@@ -336,7 +334,7 @@ EOF
 
 ```
 trtllm-serve \
-  /path/to/HunYuan-moe-7B \
+  /path/to/HunYuan-7b \
   --host localhost \
   --port 8000 \
   --backend pytorch \
@@ -354,15 +352,20 @@ trtllm-serve \
 #### Start
 Please use vLLM version v0.10.0 or higher for inference.
 
+First, please install transformers. We will merge it into the main branch later.
+```SHELL
+pip install git+https://github.com/huggingface/transformers@4970b23cedaf745f963779b4eae68da281e8c6ca
+```
+
 We use tencent/Hunyuan-7B-Instruct for example
-- Download Model file: 
+- Download Model file:
   - Huggingface:  will download automicly by vllm.
   - ModelScope: `modelscope download --model Tencent-Hunyuan/Hunyuan-7B-Instruct`
-  
+
 - model download by huggingface:
 ```shell
 export MODEL_PATH=tencent/Hunyuan-7B-Instruct
-``` 
+```
 
 - model downloaded by modelscope:
 ```shell
@@ -382,7 +385,7 @@ python3 -m vllm.entrypoints.openai.api_server \
     --quantization experts_int8 \
     --served-model-name hunyuan \
     2>&1 | tee log_server.txt
-``` 
+```
 - After running service script successfully, run the request script
 ```shell
 curl http://0.0.0.0:8000/v1/chat/completions -H 'Content-Type: application/json' -d '{
@@ -470,7 +473,7 @@ python3 -m vllm.entrypoints.openai.api_server \
 
 ### SGLang
 
-#### Docker Image 
+#### Docker Image
 
 We also provide a pre-built Docker image based on the latest version of SGLang.
 
